@@ -8,7 +8,7 @@ MQTT_IP        = "192.168.88.249"
 MQTT_PORT      = 1883
 MQTT_CLIENT_ID = "ESP8266-"  .. node.chipid()
 MQTT_REFRESH   = 10000
-MQTT_USER	     = "pi"
+MQTT_USER      = "pi"
 MQTT_PASS      = "raspberry"
 
 -- gpio
