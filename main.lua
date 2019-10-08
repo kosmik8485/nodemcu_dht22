@@ -59,6 +59,8 @@ function handle_mqtt_connect(client)
 	local dht_data = GetDHTData(DATA_PIN)
 	if dht_data.temperature > 0 and dht_data.humidity > 0 then
 		send_data(dht_data)
+	else
+		print("ERROR temperature or humidity is null 8(")
 	end
 	
 	print("Timer start!")
