@@ -5,8 +5,7 @@ function startup()
 		print("main.lua deleted or renamed!")
 	else
 		print("Running...")
-		dofile("main.lua")
-		--file.close("main.lua")
+		dofile("main.lua")		
 	end
 end
 
@@ -50,6 +49,7 @@ wifi_disconnect_event = function(T)
 	else
 		wifi.sta.disconnect()
 		print("Aborting connection to AP!")
+		
 		disconnect_ct = nil
 	end
 end
