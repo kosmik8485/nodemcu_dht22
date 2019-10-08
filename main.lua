@@ -1,8 +1,6 @@
 require('config')
 require('dht22')
 
-TOPIC = 'dht22/'
-
 m  = mqtt.Client(MQTT_CLIENT_ID, 120, MQTT_USER, MQTT_PASS)
 ip = wifi.sta.getip()
 
