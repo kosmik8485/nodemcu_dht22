@@ -65,7 +65,7 @@ function handle_mqtt_connect(client)
 	
 	print("Timer start!")
 	
-	dht_timer:start()
+	--dht_timer:start()
 end
 
 function do_mqtt_connect()
