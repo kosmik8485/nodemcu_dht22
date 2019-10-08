@@ -11,29 +11,35 @@ function handle_mqtt_erro(client, reason)
 	tmr.create():alarm(10*1000, tmr.ALARM_SINGLE, do_mqtt_connect)
 end
 
-local dht_timer = tmr.create()
-cnt = 0
-dht_timer:register(MQTT_REFRESH, tmr.ALARM_AUTO, function(t)
-		dht_data = GetDHTData(DATA_PIN)
-		
-		DATA = '{"mac":"'..mac..'", "ip":"'..ip..'", "refresh":"'..MQTT_REFRESH..'",'
-		DATA = DATA..' "temperature":"'..dht_data.temperature..'", "humidity":"'..dht_data.humidity..'"}"'
+function send_data(data)
+	DATA = '{"mac":"' .. mac .. '", "ip":"' .. ip .. '", "refresh":"' .. MQTT_REFRESH .. '",'
+	DATA = DATA .. ' "temperature":"' .. data.temperature .. '", "humidity":"' .. data.humidity .. '"}"'
 	
 		-- send json
-		m:publish(TOPIC..'json', DATA, 0, 0, function(conn)
-			print(MQTT_CLIENT_ID.." sending data: "..DATA.." to "..TOPIC.."json")
+		m:publish(TOPIC .. 'json', DATA, 0, 0, function(conn)
+			print(MQTT_CLIENT_ID.." sending data: " .. DATA .. " to " .. TOPIC .. "json")
 		end)
 	
 		-- send temperature
-		m:publish(TOPIC..'temp', dht_data.temperature, 0, 0, function(conn)
-			print(MQTT_CLIENT_ID.." sending temperature("..dht_data.temperature..") only to "..TOPIC.."temp")
+		m:publish(TOPIC .. 'temp', data.temperature, 0, 0, function(conn)
+			print(MQTT_CLIENT_ID .. " sending temperature(" .. data.temperature .. ") only to " .. TOPIC .. "temp")
 		end)
 		
 		-- send humidity
-		m:publish(TOPIC..'h', dht_data.humidity, 0, 0, function(conn)
-			print(MQTT_CLIENT_ID.." sending humidity("..dht_data.humidity..") only to "..TOPIC.."h")
+		m:publish(TOPIC..'h', data.humidity, 0, 0, function(conn)
+			print(MQTT_CLIENT_ID .. " sending humidity(" .. data.humidity .. ") only to " .. TOPIC .. "h")
 		end)
-			
+end
+
+local dht_timer = tmr.create()
+cnt = 0
+dht_timer:register(MQTT_REFRESH, tmr.ALARM_AUTO, function(t)
+		local dht_data = GetDHTData(DATA_PIN)
+		
+		if dht_data.temperature > 0 and dht_data.humidity > 0 then
+			send_data(dht_data)
+		end
+		
 		cnt = cnt + 1
 		
 		if cnt >= 10 then
@@ -45,25 +51,12 @@ end)
 function handle_mqtt_connect(client)
 	print("Connected to MQTT: "..MQTT_IP..":"..MQTT_PORT.." as "..MQTT_CLIENT_ID)
 	
-	dht_data = GetDHTData(DATA_PIN)
+	local dht_data = GetDHTData(DATA_PIN)
+	if dht_data.temperature > 0 and dht_data.humidity > 0 then
+		send_data(dht_data)
+	end
 	
-	DATA = '{"mac":"'..mac..'", "ip":"'..ip..'", "refresh":"'..MQTT_REFRESH..'",'
-	DATA = DATA..' "temperature":"'..dht_data.temperature..'", "humidity":"'..dht_data.humidity..'"}"'
-	
-	-- send json
-	m:publish(TOPIC..'json', DATA, 0, 0, function(conn)
-		print(MQTT_CLIENT_ID.." sending data: "..DATA.." to "..TOPIC.."json")
-	end)
-	
-	-- send temperature
-	m:publish(TOPIC..'temp', dht_data.temperature, 0, 0, function(conn)
-		print(MQTT_CLIENT_ID.." sending temperature("..dht_data.temperature..") only to "..TOPIC.."temp")
-	end)
-	
-	-- send humidity
-	m:publish(TOPIC..'h', dht_data.humidity, 0, 0, function(conn)
-		print(MQTT_CLIENT_ID.." sending humidity("..dht_data.humidity..") only to "..TOPIC.."h")
-	end)
+	print("Timer start!")
 	
 	dht_timer:start()
 end
