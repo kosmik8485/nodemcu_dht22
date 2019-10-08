@@ -28,7 +28,7 @@ do
 			return
 		end
 
-		local total_tries = 75
+		local total_tries = 10
 		print("\nWifi connection to AP("..T.SSID..") has failed!")
 
 		for key,val in pairs(wifi.eventmon.reason) do
@@ -60,7 +60,7 @@ do
 	wifi.eventmon.register(wifi.eventmon.STA_DISCONNECTED, wifi_disconnect_event)
 
 	-- TODO: либо коннектимся если точка из настроек есть, либо поднимаем свою мини точку
-	print("Starting ESP"..node.chipid().."...")
+	print("Starting ESP" .. node.chipid() .. "...")
 
 	wifi.setmode(wifi.STATION)
 	wifi.sta.config(WIFI_STATION)
