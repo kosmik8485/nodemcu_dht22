@@ -15,22 +15,26 @@ function send_data(data)
 	DATA = '{"mac":"' .. mac .. '", "ip":"' .. ip .. '", "refresh":"' .. MQTT_REFRESH .. '",'
 	DATA = DATA .. ' "temperature":"' .. data.temperature .. '", "humidity":"' .. data.humidity .. '"}"'
 	
-		-- send json
-		m:publish(TOPIC .. 'json', DATA, 0, 0, function(conn)
-			print(MQTT_CLIENT_ID.." sending data: " .. DATA .. " to " .. TOPIC .. "json")
-		end)
+	-- send json
+	m:publish(TOPIC .. 'json', DATA, 0, 0, function(conn)
+		print(MQTT_CLIENT_ID.." sending data: " .. DATA .. " to " .. TOPIC .. "json")
+	end)
 	
-		-- send temperature
-		m:publish(TOPIC .. 'temp', data.temperature, 0, 0, function(conn)
-			print(MQTT_CLIENT_ID .. " sending temperature(" .. data.temperature .. ") only to " .. TOPIC .. "temp")
-		end)
+	-- send temperature
+	m:publish(TOPIC .. 'temp', data.temperature, 0, 0, function(conn)
+		print(MQTT_CLIENT_ID .. " sending temperature(" .. data.temperature .. ") only to " .. TOPIC .. "temp")
+	end)
 		
-		-- send humidity
-		m:publish(TOPIC..'h', data.humidity, 0, 0, function(conn)
-			print(MQTT_CLIENT_ID .. " sending humidity(" .. data.humidity .. ") only to " .. TOPIC .. "h")
-		end)
+	-- send humidity
+	m:publish(TOPIC..'h', data.humidity, 0, 0, function(conn)
+		print(MQTT_CLIENT_ID .. " sending humidity(" .. data.humidity .. ") only to " .. TOPIC .. "h")
+	end)
+	
+	m:close()
+	node.dsleep(DSLEEP_TIME,DSLEEP_MODE)
 end
 
+--[[
 local dht_timer = tmr.create()
 cnt = 0
 dht_timer:register(MQTT_REFRESH, tmr.ALARM_AUTO, function(t)
@@ -47,6 +51,7 @@ dht_timer:register(MQTT_REFRESH, tmr.ALARM_AUTO, function(t)
 			t:stop()
 		end
 end)
+]]--
 
 function handle_mqtt_connect(client)
 	print("Connected to MQTT: "..MQTT_IP..":"..MQTT_PORT.." as "..MQTT_CLIENT_ID)
