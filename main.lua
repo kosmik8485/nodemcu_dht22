@@ -28,30 +28,8 @@ function send_data(data)
 	-- send humidity
 	m:publish(TOPIC..'h', data.humidity, 0, 0, function(conn)
 		print(MQTT_CLIENT_ID .. " sending humidity(" .. data.humidity .. ") only to " .. TOPIC .. "h")
-	end)
-	
-	m:close()
-	node.dsleep(DSLEEP_TIME,DSLEEP_MODE)
+	end)	
 end
-
---[[
-local dht_timer = tmr.create()
-cnt = 0
-dht_timer:register(MQTT_REFRESH, tmr.ALARM_AUTO, function(t)
-		local dht_data = GetDHTData(DATA_PIN)
-		
-		if dht_data.temperature > 0 and dht_data.humidity > 0 then
-			send_data(dht_data)
-		end
-		
-		cnt = cnt + 1
-		
-		if cnt >= 10 then
-			cnt = 0
-			t:stop()
-		end
-end)
-]]--
 
 function handle_mqtt_connect(client)
 	print("Connected to MQTT: "..MQTT_IP..":"..MQTT_PORT.." as "..MQTT_CLIENT_ID)
@@ -63,9 +41,8 @@ function handle_mqtt_connect(client)
 		print("ERROR temperature or humidity is null 8(")
 	end
 	
-	print("Timer start!")
-	
-	--dht_timer:start()
+	m:close()
+	node.dsleep(DSLEEP_TIME,DSLEEP_MODE)
 end
 
 function do_mqtt_connect()
