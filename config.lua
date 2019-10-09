@@ -16,7 +16,7 @@ DATA_PIN = 2
 
 -- deep sleep
 -- 30 sec
-DSLEEP_TIME = 10000000 
+DSLEEP_TIME = 300000000
 -- 
 DSLEEP_MODE = 4
 
