@@ -71,15 +71,8 @@ do
 		print("Some reason: " .. reset_reason .. " [ " .. raw_code .. " ]")
 	end
 	
-	if reset_reason == 5 then
-		wifi.resume(function() 
-			wifi.setmode(wifi.STATION)
-			wifi.sta.config(WIFI_STATION)
-		end)
-	else
-		wifi.setmode(wifi.STATION)
-		wifi.sta.config(WIFI_STATION)
-	end
-	
 	print("WiFi mode: " .. wifi.getmode() .. "\nWiFi phymode: " .. wifi.getphymode())
+	
+	wifi.setmode(wifi.STATION)
+	wifi.sta.config(WIFI_STATION)	
 end	
