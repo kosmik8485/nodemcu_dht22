@@ -58,13 +58,28 @@ do
 	wifi.eventmon.register(wifi.eventmon.STA_CONNECTED, wifi_connect_event)
 	wifi.eventmon.register(wifi.eventmon.STA_GOT_IP, wifi_got_ip_event)
 	wifi.eventmon.register(wifi.eventmon.STA_DISCONNECTED, wifi_disconnect_event)
-
-	-- TODO: либо коннектимся если точка из настроек есть, либо поднимаем свою мини точку
-	print("Starting ESP" .. node.chipid() .. "...")
 	
 	raw_code, reset_reason = node.bootreason()
-	print("Booting: " .. reset_reason .. " [ " .. raw_code .. " ] ")
-
-	wifi.setmode(wifi.STATION)
-	wifi.sta.config(WIFI_STATION)
+	--print("Booting: " .. reset_reason .. " [ " .. raw_code .. " ] ")
+	if reset_reason == 0 then
+		print("Power ON! Starting ESP" .. node.chipid() .. "...")
+	elseif reset_reason == 4 then
+		print("Softreset!")
+	elseif reset_reason == 5 tnen
+		print("WakeUp!")
+	else
+		print("Some reason: " .. reset_reason .. " [ " .. raw_code .. " ]")
+	end
+	
+	if reset_reason == 5 then
+		wifi.resume(function() 
+			wifi.setmode(wifi.STATION)
+			wifi.sta.config(WIFI_STATION)
+		end)
+	else
+		wifi.setmode(wifi.STATION)
+		wifi.sta.config(WIFI_STATION)
+	end
+	
+	print("WiFi mode: " .. wifi.getmode() .. "\nWiFi phymode: " .. wifi.getphymode())
 end	
