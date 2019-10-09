@@ -65,7 +65,7 @@ do
 		print("Power ON! Starting ESP" .. node.chipid() .. "...")
 	elseif reset_reason == 4 then
 		print("Softreset!")
-	elseif reset_reason == 5 tnen
+	elseif reset_reason == 5 then
 		print("WakeUp!")
 	else
 		print("Some reason: " .. reset_reason .. " [ " .. raw_code .. " ]")
