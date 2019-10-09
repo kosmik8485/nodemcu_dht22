@@ -61,6 +61,9 @@ do
 
 	-- TODO: либо коннектимся если точка из настроек есть, либо поднимаем свою мини точку
 	print("Starting ESP" .. node.chipid() .. "...")
+	
+	raw_code, reset_reason = node.bootreason()
+	print("Booting: " .. reset_reason .. " [ " .. raw_code .. " ] ")
 
 	wifi.setmode(wifi.STATION)
 	wifi.sta.config(WIFI_STATION)
