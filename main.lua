@@ -5,6 +5,11 @@ m   = mqtt.Client(MQTT_CLIENT_ID, 120, MQTT_USER, MQTT_PASS)
 ip  = wifi.sta.getip()
 mac = wifi.sta.getmac()
 
+date = ''
+http.request('http://srv.rpi','HEAD','','',function(code,body,headers) 
+	date = headers.date
+end)
+
 m:lwt("/offline", '{"message":"'..MQTT_CLIENT_ID..'", "topic":"'..TOPIC..'", "ip":"'..ip..'"}',0,0)
 
 function handle_mqtt_erro(client, reason)
@@ -15,7 +20,7 @@ function send_data(data)
     print("dt:"..data.temperature)
 	DATA = '{"mac":"' .. mac .. '", "ip":"' .. ip .. '", "refresh":"' .. MQTT_REFRESH .. '",'
 	DATA = DATA .. ' "temperature":"' .. data.temperature .. '", "humidity":"' .. data.humidity .. '",'
-    DATA = DATA .. ' "time":"' .. 1 .. '"}'
+        DATA = DATA .. ' "date":"' .. date .. '"}'
 	
 	-- send json
 	m:publish(TOPIC .. 'json', DATA, 0, 0, function(conn)
@@ -48,14 +53,6 @@ function handle_mqtt_connect(client)
 	else
 		print("ERROR temperature or humidity is null 8(")
 	end
-	
-	--m:close()
-    --tmr.create():alarm(10000,tmr.ALARM_SINGLE, function()
-    --    local d = GetDHTData(DATA_PIN)
-   --     send_data(d) 
-   -- end)
-   -- m:close()
-	--node.dsleep(DSLEEP_TIME,DSLEEP_MODE)
 end
 
 function do_mqtt_connect()
