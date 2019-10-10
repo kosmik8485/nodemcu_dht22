@@ -5,6 +5,7 @@ do
 			print("main.lua deleted or renamed!")
 		else
 			print("Running...")
+            file.close('main.lua')
 			dofile("main.lua")		
 		end
 	end

@@ -18,6 +18,6 @@ DATA_PIN = 2
 -- 30 sec
 DSLEEP_TIME = 300000000
 -- 
-DSLEEP_MODE = 4
+DSLEEP_MODE = nil
 
 TOPIC = "dht22/"

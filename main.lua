@@ -7,22 +7,15 @@ mac = wifi.sta.getmac()
 
 m:lwt("/offline", '{"message":"'..MQTT_CLIENT_ID..'", "topic":"'..TOPIC..'", "ip":"'..ip..'"}',0,0)
 
-function do_sleep()
-	print("Preparing to sleep...")
-	m:close()
-	wifi.disconnect()
-	tmr.create():alarm(2500, tmr.ALARM_SINGLE, function()
-		node.dsleep(DSLEEP_TIME, DSLEEP_MODE)
-	end)
-end
-
 function handle_mqtt_erro(client, reason)
 	tmr.create():alarm(10*1000, tmr.ALARM_SINGLE, do_mqtt_connect)
 end
 
 function send_data(data)
+    print("dt:"..data.temperature)
 	DATA = '{"mac":"' .. mac .. '", "ip":"' .. ip .. '", "refresh":"' .. MQTT_REFRESH .. '",'
-	DATA = DATA .. ' "temperature":"' .. data.temperature .. '", "humidity":"' .. data.humidity .. '"}"'
+	DATA = DATA .. ' "temperature":"' .. data.temperature .. '", "humidity":"' .. data.humidity .. '",'
+    DATA = DATA .. ' "time":"' .. 1 .. '"}'
 	
 	-- send json
 	m:publish(TOPIC .. 'json', DATA, 0, 0, function(conn)
@@ -38,9 +31,13 @@ function send_data(data)
 	m:publish(TOPIC..'h', data.humidity, 0, 0, function(conn)
 		print(MQTT_CLIENT_ID .. " sending humidity(" .. data.humidity .. ") only to " .. TOPIC .. "h")
 	end)	
-    
-	tmr.create():alarm(2500, tmr.ALARM_SINGLE, do_sleep)
-end	
+    print("dh:"..data.humidity)
+    tmr.create():alarm(2000, tmr.ALARM_SINGLE, function()
+        print("close")
+        m:close()
+        node.dsleep(DSLEEP_TIME, DSLEEP_MODE)
+    end)
+end
 
 function handle_mqtt_connect(client)
 	print("Connected to MQTT: "..MQTT_IP..":"..MQTT_PORT.." as "..MQTT_CLIENT_ID)
@@ -51,6 +48,14 @@ function handle_mqtt_connect(client)
 	else
 		print("ERROR temperature or humidity is null 8(")
 	end
+	
+	--m:close()
+    --tmr.create():alarm(10000,tmr.ALARM_SINGLE, function()
+    --    local d = GetDHTData(DATA_PIN)
+   --     send_data(d) 
+   -- end)
+   -- m:close()
+	--node.dsleep(DSLEEP_TIME,DSLEEP_MODE)
 end
 
 function do_mqtt_connect()
