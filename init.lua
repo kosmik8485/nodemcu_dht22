@@ -4,8 +4,12 @@ do
 		if file.open("main.lua") == nil then
 			print("main.lua deleted or renamed!")
 		else
-			print("Running...")
-            file.close('main.lua')
+			date = ''
+			http.request("http://srv.rpi","HEAD","","", function(code,data,headers)
+				date = headers.date
+			end)
+			print(date .. " Running...")
+            		file.close('main.lua')
 			dofile("main.lua")		
 		end
 	end
